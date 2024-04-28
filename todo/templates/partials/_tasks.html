@@ -1,12 +1,6 @@
 
 <div id="tasks"
-    class="tasks-list"
-    hx-target="#tasks"
-    hx-swap="outerHTML">
-    <!-- <div>
-        <input type="checkbox" checked="{{task.completed}}"
-            aria-label="Checkbox for following text input">
-    </div> -->
+    class="tasks-list">
     <button
         class="btn btn-secondary btn-sort"
         hx-get="{% url 'tasks' %}"

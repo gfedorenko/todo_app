@@ -3,8 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.http import QueryDict
-import json
-
 
 from .forms import UserRegistrationForm
 from .models import Task
