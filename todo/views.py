@@ -3,24 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.http import QueryDict
+import json
 
 
 from .forms import UserRegistrationForm
 from .models import Task
-
-
-def register(request):
-    form = UserRegistrationForm()
-    if request.method == "POST":
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("login")
-    else:
-        form = UserRegistrationForm()
-
-    context = {"form": form}
-    return render(request, "register.html", context)
 
 
 @method_decorator(login_required, name="dispatch")
@@ -31,9 +18,12 @@ class TaskListView(View):
         order = request.GET.get("order")
 
         if order:
-            tasks = tasks = Task.objects.filter(user=request.user).order_by("-priority")
+            tasks = tasks = Task.objects.filter(user=request.user).order_by(
+                "is_completed",
+                "-priority",
+            )
         else:
-            tasks = Task.objects.filter(user=request.user).order_by("-id")
+            tasks = Task.objects.filter(user=request.user)
         context = {"tasks": tasks}
 
         if request.htmx:
@@ -66,16 +56,17 @@ class TaskView(View):
         return render(request, "todo.html", context)
 
     def put(self, request, *args, **kwargs):
-
-        put = QueryDict(request.body).dict()
+        data = QueryDict(request.body)
 
         task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
 
-        task = Task.objects.filter(
-            pk=kwargs["pk"],
-        ).update(**put)
+        task.name = data.get("name", task.name)
+        task.desc = data.get("desc", task.desc)
+        task.priority = data.get("priority", task.priority)
 
-        tasks = Task.objects.filter(user=request.user).order_by("-id")
+        task.save()
+
+        tasks = Task.objects.filter(user=request.user)
         context = {"tasks": tasks}
 
         if request.htmx:
@@ -88,7 +79,7 @@ class TaskView(View):
     def delete(self, request, *args, **kwargs):
         task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
         task.delete()
-        tasks = Task.objects.filter(user=request.user).order_by("-id")
+        tasks = Task.objects.filter(user=request.user)
         context = {"tasks": tasks}
 
         if request.htmx:
@@ -97,3 +88,33 @@ class TaskView(View):
             base_template = "todo.html"
 
         return render(request, base_template, context)
+
+
+def complete_task(request, *args, **kwargs):
+    task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
+    task.is_completed = True
+    task.save()
+
+    tasks = Task.objects.filter(user=request.user)
+    context = {"tasks": tasks}
+
+    if request.htmx:
+        base_template = "partials/_tasks.html"
+    else:
+        base_template = "todo.html"
+
+    return render(request, base_template, context)
+
+
+def register(request):
+    form = UserRegistrationForm()
+    if request.method == "POST":
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("login")
+    else:
+        form = UserRegistrationForm()
+
+    context = {"form": form}
+    return render(request, "register.html", context)

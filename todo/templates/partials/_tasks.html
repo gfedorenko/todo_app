@@ -16,12 +16,14 @@
     {% for task_i in tasks %}
     <div class="task-container">
         <div
-            class="task {% if task_i.priority == 0 %} low {% endif %} {% if task_i.priority == 1 %} normal {% endif %} {% if task_i.priority == 2 %} high {% endif %}">
+            class="task {% if task_i.priority == 0 %} low {% endif %} {% if task_i.priority == 1 %} normal {% endif %} {% if task_i.priority == 2 %} high {% endif %} {% if task_i.is_completed %} completed {% endif %}">
             <div>
-                <div>{{ task_i.name }}</div>
-                <div>{{ task_i.desc }}</div>
+                <div>Title: {{ task_i.name }}</div>
+                <div>Description: {{ task_i.desc }}</div>
             </div>
-            <div class="btn-group" role="group" aria-label="Basic example">
+            <div class="btn-group" role="group">
+
+                {% if not task_i.is_completed %}
 
                 <button type="button" class="btn btn-link"
                     data-toggle="modal" data-target="#edit{{ task_i.id }}">
@@ -50,9 +52,16 @@
                                 <div class="modal-body">
 
                                     <div class="modal-body">
+                                        <label>Name</label>
                                         <input type="text"
                                             name="name" id="name"
                                             value="{{ task_i.name }}"
+                                            required
+                                            size="40">
+                                        <label>Description</label>
+                                        <input type="text"
+                                            name="desc" id="desc"
+                                            value="{{ task_i.desc }}"
                                             required
                                             size="40">
                                     </div>
@@ -72,10 +81,10 @@
                 </div>
 
                 <button type="button" class="btn btn-link"
-                    hx-patch="{% url 'task' task_i.id %}"
-                    hx-vals="{completed: true}">Mark
+                    hx-put="{% url 'complete_task' task_i.id %}">Mark
                     completed
                 </button>
+                {% endif %}
 
                 <button type="button" class="btn btn-link"
                     hx-delete="{% url 'task' task_i.id %}">Delete</button>

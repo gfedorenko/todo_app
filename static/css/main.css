@@ -7,26 +7,32 @@
 .tasks-list {
     overflow-y: scroll;
     width: 100%;
+    height: 100vh;
+
 }
 .task {
     display: flex;
     border-radius: 5px;
     margin: 10px;
-    padding: 5px;
+    padding: 15px;
     align-items: center;
     justify-content: space-between;
+    
 }
 
 .btn-sort {
     margin: 10px;
 }
 
-.low{
-    background-color: #aefcb7;
+.low {
+    background-color: #a3cfbb;
 }
-.normal{
-    background-color: #fce7ae;
+.normal {
+    background-color: #ffe69c;
 }
 .high {
-    background-color: #f56c6c;
+    background-color: #fecba1;
+}
+.completed {
+    background-color: #e9ecef;
 }
