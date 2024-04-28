@@ -34,6 +34,7 @@
 
             {% if user.is_authenticated %}
             <span>Welcome, {{ request.user.username }}</span>
+            <a class="link ml-auto" href="{% url 'logout' %}">Logout</a>
             {% endif %}
         </nav>
 
