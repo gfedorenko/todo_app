@@ -1,0 +1,33 @@
+{% extends 'index.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="card center-block mx-auto" style="width: 700px;">
+
+    <div>
+        <div class="card-header">
+            Login
+        </div>
+
+        <form action method="POST" style="padding: 15px;">
+            {% csrf_token %}
+            <fieldset>
+                {{ form | crispy }}
+            </fieldset>
+
+            <div class="form-submit">
+                <button class="btn btn-success" type="submit">Login</button>
+            </div>
+
+            <div>
+                <span class="text-muted">
+
+                    <a href="{% url 'register' %}">Register</a>
+
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

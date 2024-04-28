@@ -1,0 +1,38 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="input-group mb-3">
+        <form action="{% url 'tasks' %}" method="post">
+            {% csrf_token %}
+
+            <input class="form-control" type="text" name="new-task"
+                id="new-task" required>
+            <input class="form-control" type="text" name="new-task-desc"
+                id="new-task-desc" required>
+            <button type="submit" class="btn btn-primary">Add task</button>
+        </form>
+    </div>
+
+    {% for task_i in tasks %}
+    <div class="task-container">
+        <div class="tasks">
+            <input type="checkbox" checked="{{task.completed}}"
+                aria-label="Checkbox for following text input">
+            <div>{{ task_i.name }}</div>
+            <div>{{ task_i.desc }}</div>
+
+            <div class="task-buttons">
+
+                <a href="{% url 'task' task_i.id %}">Completed</a>
+                <a href="{% url 'task' task_i.id %}">Delete</a>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}
