@@ -1,7 +1,8 @@
-.task-container {
+.task {
     display: flex;
     border-radius: 5px;
     background-color: aquamarine;
     margin: 10px;
     padding: 5px;
+    align-items: center;
 }

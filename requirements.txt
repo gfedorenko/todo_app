@@ -1,0 +1,4 @@
+django
+django-htmx
+crispy-bootstrap4
+django-crispy-forms

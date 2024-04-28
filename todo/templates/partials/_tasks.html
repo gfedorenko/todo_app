@@ -1,0 +1,23 @@
+<div id="tasks"
+    hx-target="#tasks"
+    hx-swap="innerHTML">
+    {% for task_i in tasks %}
+    <div class="task-container">
+        <div class="task">
+            <input type="checkbox" checked="{{task.completed}}"
+                aria-label="Checkbox for following text input">
+            <div>{{ task_i.name }}</div>
+            <div>{{ task_i.desc }}</div>
+
+            <div class="task-buttons">
+
+                <a href="{% url 'task' task_i.id %}">Completed</a>
+                <a hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-delete="{% url 'task' task_i.id %}">Delete</a>
+
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+</div>

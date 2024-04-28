@@ -69,4 +69,12 @@ class TaskView(View):
     def delete(self, request, *args, **kwargs):
         task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
         task.delete()
-        return redirect("home")
+        tasks = Task.objects.filter(user=request.user).order_by("-id")
+        context = {"tasks": tasks}
+
+        if request.htmx:
+            base_template = "partials/_tasks.html"
+        else:
+            base_template = "todo.html"
+
+        return render(request, base_template, context)

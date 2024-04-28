@@ -12,9 +12,15 @@
             rel="stylesheet">
         <script
             src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <!-- HTMX -->
+        <script src="https://unpkg.com/htmx.org@1.1.0"></script>
+
+        <link type="text/css" rel="stylesheet"
+            href="{% static '/css/main.css' %}">
+
     </head>
 
-    <body>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="navbar-brand">TODO App</div>
 
@@ -25,7 +31,11 @@
 
         {% block content %}
         {% endblock %}
-
+        <script>
+            document.body.addEventListener('htmx:configRequest', (event) => {
+              event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+            })
+          </script>
     </body>
 
 </html>

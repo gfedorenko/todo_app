@@ -1,0 +1,9 @@
+<form action="{% url 'tasks' %}" method="post">
+    {% csrf_token %}
+
+    <input class="form-control" type="text" name="new-task"
+        id="new-task" required>
+    <input class="form-control" type="text" name="new-task-desc"
+        id="new-task-desc" required>
+    <button type="submit" class="btn btn-primary">Add task</button>
+</form>
