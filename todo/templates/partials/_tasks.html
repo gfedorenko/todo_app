@@ -7,6 +7,12 @@
         <input type="checkbox" checked="{{task.completed}}"
             aria-label="Checkbox for following text input">
     </div> -->
+    <button
+        class="btn btn-secondary btn-sort"
+        hx-get="{% url 'tasks' %}"
+        hx-vals='{"order": "priority"}'>
+        Show high priority on top
+    </button>
     {% for task_i in tasks %}
     <div class="task-container">
         <div
@@ -65,8 +71,11 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-link">Mark
-                    completed</button>
+                <button type="button" class="btn btn-link"
+                    hx-patch="{% url 'task' task_i.id %}"
+                    hx-vals="{completed: true}">Mark
+                    completed
+                </button>
 
                 <button type="button" class="btn btn-link"
                     hx-delete="{% url 'task' task_i.id %}">Delete</button>

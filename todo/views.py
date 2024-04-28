@@ -28,10 +28,20 @@ class TaskListView(View):
     model = View
 
     def get(self, request, *args, **kwargs):
-        tasks = Task.objects.filter(user=request.user).order_by("-id")
+        order = request.GET.get("order")
+
+        if order:
+            tasks = tasks = Task.objects.filter(user=request.user).order_by("-priority")
+        else:
+            tasks = Task.objects.filter(user=request.user).order_by("-id")
         context = {"tasks": tasks}
 
-        return render(request, "todo.html", context)
+        if request.htmx:
+            base_template = "partials/_tasks.html"
+        else:
+            base_template = "todo.html"
+
+        return render(request, base_template, context)
 
     def post(self, request, *args, **kwargs):
 
