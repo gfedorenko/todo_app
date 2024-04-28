@@ -3,30 +3,10 @@
 {% block content %}
 
 <div class="container">
+
+    {% include 'partials/_tasks.html' %}
     <div class="input-group mb-3">
         {% include 'partials/_task_form.html' %}
-    </div>
-
-    <div id="tasks"
-        hx-target="#tasks"
-        hx-swap="innerHTML">
-        {% for task_i in tasks %}
-        <div class="task-container">
-            <div class="task">
-                <input type="checkbox" checked="{{task.completed}}"
-                    aria-label="Checkbox for following text input">
-                <div>{{ task_i.name }}</div>
-                <div>{{ task_i.desc }}</div>
-
-                <div class="task-buttons">
-
-                    <a href="{% url 'task' task_i.id %}">Completed</a>
-                    <a hx-delete="{% url 'task' task_i.id %}">Delete</a>
-                </div>
-
-            </div>
-        </div>
-        {% endfor %}
     </div>
 
 </div>

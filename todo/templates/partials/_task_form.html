@@ -1,9 +1,18 @@
 <form action="{% url 'tasks' %}" method="post">
     {% csrf_token %}
 
-    <input class="form-control" type="text" name="new-task"
-        id="new-task" required>
-    <input class="form-control" type="text" name="new-task-desc"
-        id="new-task-desc" required>
-    <button type="submit" class="btn btn-primary">Add task</button>
+    <input class="form-control form-input" type="text" name="name"
+        placeholder="Name"
+        id="name" required>
+    <input class="form-control form-input" type="text" name="desc"
+        placeholder="Description"
+        id="desc" required>
+    <select class="form-control form-input" id="priority"
+        name="priority">
+        <option value="{{0}}">Low</option>
+        <option value="{{1}}">Normal</option>
+        <option value="{{2}}">High</option>
+    </select>
+
+    <button type="submit" class="btn btn-primary form-input">Add task</button>
 </form>

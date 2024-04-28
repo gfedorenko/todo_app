@@ -1,20 +1,75 @@
+
 <div id="tasks"
+    class="tasks-list"
     hx-target="#tasks"
-    hx-swap="innerHTML">
+    hx-swap="outerHTML">
+    <!-- <div>
+        <input type="checkbox" checked="{{task.completed}}"
+            aria-label="Checkbox for following text input">
+    </div> -->
     {% for task_i in tasks %}
     <div class="task-container">
-        <div class="task">
-            <input type="checkbox" checked="{{task.completed}}"
-                aria-label="Checkbox for following text input">
-            <div>{{ task_i.name }}</div>
-            <div>{{ task_i.desc }}</div>
+        <div
+            class="task {% if task_i.priority == 0 %} low {% endif %} {% if task_i.priority == 1 %} normal {% endif %} {% if task_i.priority == 2 %} high {% endif %}">
+            <div>
+                <div>{{ task_i.name }}</div>
+                <div>{{ task_i.desc }}</div>
+            </div>
+            <div class="btn-group" role="group" aria-label="Basic example">
 
-            <div class="task-buttons">
+                <button type="button" class="btn btn-link"
+                    data-toggle="modal" data-target="#edit{{ task_i.id }}">
+                    Edit
+                </button>
+                <div class="modal fade" data-backdrop='false'
+                    id="edit{{ task_i.id }}"
+                    tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form hx-put="{% url 'task' task_i.id %}"
+                                hx-target="#tasks"
+                                hx-swap="outerHTML">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"
+                                        id="exampleModalLabel">Modal
+                                        title</h5>
+                                    <button type="button" class="close"
+                                        data-dismiss="modal"
+                                        aria-label="Close">
+                                        <span
+                                            aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
 
-                <a href="{% url 'task' task_i.id %}">Completed</a>
-                <a hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                    hx-delete="{% url 'task' task_i.id %}">Delete</a>
+                                    <div class="modal-body">
+                                        <input type="text"
+                                            name="name" id="name"
+                                            value="{{ task_i.name }}"
+                                            required
+                                            size="40">
+                                    </div>
 
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button"
+                                        class="btn btn-secondary"
+                                        data-dismiss="modal">Close</button>
+                                    <button type="submit"
+                                        class="btn btn-primary">Save
+                                        changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-link">Mark
+                    completed</button>
+
+                <button type="button" class="btn btn-link"
+                    hx-delete="{% url 'task' task_i.id %}">Delete</button>
             </div>
 
         </div>

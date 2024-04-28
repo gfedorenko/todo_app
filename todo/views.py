@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.http import QueryDict
+
 
 from .forms import UserRegistrationForm
 from .models import Task
@@ -33,10 +35,13 @@ class TaskListView(View):
 
     def post(self, request, *args, **kwargs):
 
-        task_name = request.POST.get("new-task")
-        task_desc = request.POST.get("new-task-desc")
+        task_name = request.POST.get("name")
+        task_desc = request.POST.get("desc")
+        task_priority = request.POST.get("priority")
 
-        todo = Task.objects.create(name=task_name, desc=task_desc, user=request.user)
+        task = Task.objects.create(
+            name=task_name, desc=task_desc, priority=task_priority, user=request.user
+        )
         return redirect("home")
 
 
@@ -50,21 +55,25 @@ class TaskView(View):
 
         return render(request, "todo.html", context)
 
-    # def post(self, request, *args, **kwargs):
-    #     task_name = request.POST.get("new-task")
-    #     task_desc = request.POST.get("new-task-desc")
+    def put(self, request, *args, **kwargs):
 
-    #     task = Task.objects.create(name=task_name, desc=task_desc, user=request.user)
-    #     return redirect("home")
+        put = QueryDict(request.body).dict()
 
-    # def put(self, request, *args, **kwargs):
-    #     task_name = request.get("new-task")
-    #     task_desc = request.get("new-task-desc")
+        task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
 
-    #     task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
+        task = Task.objects.filter(
+            pk=kwargs["pk"],
+        ).update(**put)
 
-    #     task = Task.objects.create(name=task_name, desc=task_desc, user=request.user)
-    #     return redirect("home")
+        tasks = Task.objects.filter(user=request.user).order_by("-id")
+        context = {"tasks": tasks}
+
+        if request.htmx:
+            base_template = "partials/_tasks.html"
+        else:
+            base_template = "todo.html"
+
+        return render(request, base_template, context)
 
     def delete(self, request, *args, **kwargs):
         task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
