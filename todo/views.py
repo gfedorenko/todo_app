@@ -8,9 +8,15 @@ from .forms import UserRegistrationForm
 from .models import Task
 
 
+def get_template(request):
+    if request.htmx:
+        return "partials/_tasks.html"
+    return "todo.html"
+
+
 @method_decorator(login_required, name="dispatch")
 class TaskListView(View):
-    model = View
+    model = Task
 
     def get(self, request, *args, **kwargs):
         order = request.GET.get("order")
@@ -24,10 +30,7 @@ class TaskListView(View):
             tasks = Task.objects.filter(user=request.user)
         context = {"tasks": tasks}
 
-        if request.htmx:
-            base_template = "partials/_tasks.html"
-        else:
-            base_template = "todo.html"
+        base_template = get_template(request)
 
         return render(request, base_template, context)
 
@@ -45,7 +48,7 @@ class TaskListView(View):
 
 @method_decorator(login_required, name="dispatch")
 class TaskView(View):
-    model = View
+    model = Task
 
     def get(self, request, *args, **kwargs):
         task = get_object_or_404(Task, id=kwargs["pk"])
@@ -67,10 +70,7 @@ class TaskView(View):
         tasks = Task.objects.filter(user=request.user)
         context = {"tasks": tasks}
 
-        if request.htmx:
-            base_template = "partials/_tasks.html"
-        else:
-            base_template = "todo.html"
+        base_template = get_template(request)
 
         return render(request, base_template, context)
 
@@ -80,10 +80,7 @@ class TaskView(View):
         tasks = Task.objects.filter(user=request.user)
         context = {"tasks": tasks}
 
-        if request.htmx:
-            base_template = "partials/_tasks.html"
-        else:
-            base_template = "todo.html"
+        base_template = get_template(request)
 
         return render(request, base_template, context)
 
