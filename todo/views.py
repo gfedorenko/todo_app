@@ -14,6 +14,15 @@ def get_template(request):
     return "todo.html"
 
 
+def get_render(request):
+    tasks = Task.objects.filter(user=request.user)
+    context = {"tasks": tasks}
+
+    base_template = get_template(request)
+
+    return render(request, base_template, context)
+
+
 @method_decorator(login_required, name="dispatch")
 class TaskListView(View):
     model = Task
@@ -40,10 +49,11 @@ class TaskListView(View):
         task_desc = request.POST.get("desc")
         task_priority = request.POST.get("priority")
 
-        task = Task.objects.create(
+        Task.objects.create(
             name=task_name, desc=task_desc, priority=task_priority, user=request.user
         )
-        return redirect("home")
+
+        return get_render(request)
 
 
 @method_decorator(login_required, name="dispatch")
@@ -67,22 +77,12 @@ class TaskView(View):
 
         task.save()
 
-        tasks = Task.objects.filter(user=request.user)
-        context = {"tasks": tasks}
-
-        base_template = get_template(request)
-
-        return render(request, base_template, context)
+        return get_render(request)
 
     def delete(self, request, *args, **kwargs):
         task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
         task.delete()
-        tasks = Task.objects.filter(user=request.user)
-        context = {"tasks": tasks}
-
-        base_template = get_template(request)
-
-        return render(request, base_template, context)
+        return get_render(request)
 
 
 def register(request):

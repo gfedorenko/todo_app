@@ -40,15 +40,15 @@
                                             <input class="form-control form-input" type="text" name="desc" id="desc"
                                                 value="{{ task_i.desc }}" required size="40">
                                         </div>
-                                        <label>Description</label>
+                                        <label>Priority</label>
                                         <div>
                                             <select class="form-control form-input" id="priority" name="priority"
                                                 selected="{{ task_i.priority}}">
-                                                <option value="{{0}}" {% if task_i.priority==0 %} selected {% endif %}>
+                                                <option value="{{0}}" {% if task_i.priority == 0 %} selected {% endif %}>
                                                     Low</option>
-                                                <option value="{{1}}" {% if task_i.priority==1 %} selected {% endif %}>
+                                                <option value="{{1}}" {% if task_i.priority == 1 %} selected {% endif %}>
                                                     Normal</option>
-                                                <option value="{{2}}" {% if task_i.priority==2 %} selected {% endif %}>
+                                                <option value="{{2}}" {% if task_i.priority == 2 %} selected {% endif %}>
                                                     High</option>
                                             </select>
                                         </div>
