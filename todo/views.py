@@ -57,10 +57,10 @@ class TaskView(View):
         data = QueryDict(request.body)
 
         task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
-
         task.name = data.get("name", task.name)
         task.desc = data.get("desc", task.desc)
         task.priority = data.get("priority", task.priority)
+        task.is_completed = data.get("is_completed", task.is_completed)
 
         task.save()
 
@@ -86,22 +86,6 @@ class TaskView(View):
             base_template = "todo.html"
 
         return render(request, base_template, context)
-
-
-def complete_task(request, *args, **kwargs):
-    task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
-    task.is_completed = True
-    task.save()
-
-    tasks = Task.objects.filter(user=request.user)
-    context = {"tasks": tasks}
-
-    if request.htmx:
-        base_template = "partials/_tasks.html"
-    else:
-        base_template = "todo.html"
-
-    return render(request, base_template, context)
 
 
 def register(request):

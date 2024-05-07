@@ -107,7 +107,7 @@
                 </div>
 
                 <button type="button" class="btn btn-link"
-                    hx-put="{% url 'complete_task' task_i.id %}">Mark
+                    hx-put="{% url 'task' task_i.id %}" hx-vals='{"name": "{{task_i.name}}", "desc": "{{task_i.desc}}", "is_completed": "True"}'>Mark
                     completed
                 </button>
                 {% endif %}
