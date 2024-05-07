@@ -26,7 +26,7 @@ class Task(models.Model):
     class Meta:
         db_table = "task"
         verbose_name = "task"
-        ordering = ("is_completed",)
+        ordering = ("is_completed", "-id")
 
     def __str__(self):
         return self.name

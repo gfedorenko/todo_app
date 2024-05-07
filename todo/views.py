@@ -8,9 +8,24 @@ from .forms import UserRegistrationForm
 from .models import Task
 
 
+def get_template(request):
+    if request.htmx:
+        return "partials/_tasks.html"
+    return "todo.html"
+
+
+def get_render(request):
+    tasks = Task.objects.filter(user=request.user)
+    context = {"tasks": tasks}
+
+    base_template = get_template(request)
+
+    return render(request, base_template, context)
+
+
 @method_decorator(login_required, name="dispatch")
 class TaskListView(View):
-    model = View
+    model = Task
 
     def get(self, request, *args, **kwargs):
         order = request.GET.get("order")
@@ -24,10 +39,7 @@ class TaskListView(View):
             tasks = Task.objects.filter(user=request.user)
         context = {"tasks": tasks}
 
-        if request.htmx:
-            base_template = "partials/_tasks.html"
-        else:
-            base_template = "todo.html"
+        base_template = get_template(request)
 
         return render(request, base_template, context)
 
@@ -37,15 +49,16 @@ class TaskListView(View):
         task_desc = request.POST.get("desc")
         task_priority = request.POST.get("priority")
 
-        task = Task.objects.create(
+        Task.objects.create(
             name=task_name, desc=task_desc, priority=task_priority, user=request.user
         )
-        return redirect("home")
+
+        return get_render(request)
 
 
 @method_decorator(login_required, name="dispatch")
 class TaskView(View):
-    model = View
+    model = Task
 
     def get(self, request, *args, **kwargs):
         task = get_object_or_404(Task, id=kwargs["pk"])
@@ -57,51 +70,19 @@ class TaskView(View):
         data = QueryDict(request.body)
 
         task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
-
         task.name = data.get("name", task.name)
         task.desc = data.get("desc", task.desc)
         task.priority = data.get("priority", task.priority)
+        task.is_completed = data.get("is_completed", task.is_completed)
 
         task.save()
 
-        tasks = Task.objects.filter(user=request.user)
-        context = {"tasks": tasks}
-
-        if request.htmx:
-            base_template = "partials/_tasks.html"
-        else:
-            base_template = "todo.html"
-
-        return render(request, base_template, context)
+        return get_render(request)
 
     def delete(self, request, *args, **kwargs):
         task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
         task.delete()
-        tasks = Task.objects.filter(user=request.user)
-        context = {"tasks": tasks}
-
-        if request.htmx:
-            base_template = "partials/_tasks.html"
-        else:
-            base_template = "todo.html"
-
-        return render(request, base_template, context)
-
-
-def complete_task(request, *args, **kwargs):
-    task = get_object_or_404(Task, id=kwargs["pk"], user=request.user)
-    task.is_completed = True
-    task.save()
-
-    tasks = Task.objects.filter(user=request.user)
-    context = {"tasks": tasks}
-
-    if request.htmx:
-        base_template = "partials/_tasks.html"
-    else:
-        base_template = "todo.html"
-
-    return render(request, base_template, context)
+        return get_render(request)
 
 
 def register(request):
